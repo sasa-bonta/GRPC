@@ -7,4 +7,4 @@ const PUBLISH = "publish"
 const SUBSCRIBE = "subscribe"
 const CONFIRM = "confirm"
 const SUCCESS = "success"
-
+const ERROR = "error"

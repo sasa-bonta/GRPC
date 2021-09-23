@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/tutorialedge/go-grpc-tutorial/chat"
 	"github.com/tutorialedge/go-grpc-tutorial/common"
 	"log"
 	"os"
@@ -10,8 +11,6 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-
-	"github.com/tutorialedge/go-grpc-tutorial/chat"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-package storage
+package message
 
 type Message struct {
 	Action string
