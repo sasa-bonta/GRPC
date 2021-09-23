@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/tutorialedge/go-grpc-tutorial/chat"
+	"github.com/tutorialedge/go-grpc-tutorial/broker/cmd/storage/client"
 	"github.com/tutorialedge/go-grpc-tutorial/common"
 	"log"
 	"os"
@@ -22,7 +22,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := chat.NewChatServiceClient(conn)
+	c := client.NewChatServiceClient(conn)
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -33,7 +33,7 @@ func main() {
 		fmt.Print("Enter message: ")
 		body, _ := reader.ReadString('\n')
 
-		message := chat.Message{
+		message := client.Message{
 			Action: common.PUBLISH,
 			Topic:  strings.ToLower(topic),
 			Body:   strings.ToLower(body),

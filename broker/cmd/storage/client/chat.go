@@ -1,7 +1,6 @@
-package chat
+package client
 
 import (
-	"github.com/tutorialedge/go-grpc-tutorial/broker/cmd/storage/client"
 	messageDir "github.com/tutorialedge/go-grpc-tutorial/broker/cmd/storage/message"
 	"github.com/tutorialedge/go-grpc-tutorial/common"
 	"golang.org/x/net/context"
@@ -10,7 +9,7 @@ import (
 )
 
 var ms = &messageDir.MessagesList{}
-var cs = &client.ClientsList{}
+var cs = &ClientsList{}
 
 type Server struct {
 }
@@ -29,7 +28,7 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 
 	case common.PUBLISH:
 		ms.AddMessage(&messageToAdd)
-
+		cs.Publish(message.Topic, message.Body)
 		break
 	case common.SUBSCRIBE:
 		cs.AddSubscription(message.Topic, address)

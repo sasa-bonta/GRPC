@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/tutorialedge/go-grpc-tutorial/chat"
+	"github.com/tutorialedge/go-grpc-tutorial/broker/cmd/storage/client"
 	"github.com/tutorialedge/go-grpc-tutorial/common"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -20,13 +21,13 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := chat.NewChatServiceClient(conn)
+	c := client.NewChatServiceClient(conn)
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter topic: ")
 	topic, _ := reader.ReadString('\n')
 
-	message := chat.Message{
+	message := client.Message{
 		Action: common.SUBSCRIBE,
 		Topic:  topic,
 	}
@@ -38,4 +39,7 @@ func main() {
 
 	log.Printf("Response from Server: {action : \"%s\", topic : \"%s\", body : \"%s\"}", response.Action, response.Topic, response.Body)
 
+	time.Sleep(10 * time.Second)
+
+	log.Println("Connection stopped")
 }
