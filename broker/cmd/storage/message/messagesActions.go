@@ -11,9 +11,10 @@ func (ml *MessagesList) AddMessage(message *Message) *MessagesList {
 }
 
 func (ml *MessagesList) NextMessage() *Message {
+	fmt.Println("Shifting message")
 	if !ml.IsEmpty() {
 		message := ml.Messages[0]
-		ml.Messages = ml.Messages[:1]
+		ml.Messages = ml.Messages[1:]
 		return &message
 	}
 	return nil

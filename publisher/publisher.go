@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"github.com/tutorialedge/go-grpc-tutorial/broker/cmd/storage/client"
 	"github.com/tutorialedge/go-grpc-tutorial/common"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 	"log"
 	"os"
 	"strings"
-
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -20,7 +19,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not connect: %s", err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			fmt.Println("Cannot close connection")
+			os.Exit(1)
+		}
+	}(conn)
 
 	c := client.NewChatServiceClient(conn)
 
@@ -35,8 +40,8 @@ func main() {
 
 		message := client.Message{
 			Action: common.PUBLISH,
-			Topic:  strings.ToLower(topic),
-			Body:   strings.ToLower(body),
+			Topic:  strings.ToLower(strings.TrimSpace(topic)),
+			Body:   strings.ToLower(strings.TrimSpace(body)),
 		}
 
 		response, err := c.SayHello(context.Background(), &message)
@@ -46,4 +51,5 @@ func main() {
 
 		log.Printf("Response from Server: {action : \"%s\", topic : \"%s\", body : \"%s\"}", response.Action, response.Topic, response.Body)
 	}
+
 }

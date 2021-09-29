@@ -6,20 +6,16 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
+	"os"
 )
 
 func (cl *ClientsList) Publish(topic, message string) {
 	subscriptions := cl.GetSubscriptions(topic, nil)
 
 	for _, sub := range subscriptions {
-		fmt.Printf("Sending to client id %s message is %s \n", sub.Address, message)
+		fmt.Printf("Sending to client: %s message is %s \n", sub.Address, message)
 		messageObj := Message{Action: common.PUBLISH, Topic: topic, Body: message}
-		conn, err := grpc.Dial(common.HostPort, grpc.WithInsecure())
-		if err != nil {
-			log.Fatalf("could not connect to client: %s", err)
-		}
-		c := NewChatServiceClient(conn)
-		c.SayHello(context.Background(), &messageObj)
+		sendMessage(sub.Address, &messageObj)
 	}
 }
 
@@ -41,4 +37,27 @@ func (cl *ClientsList) GetSubscriptions(topic string, client *Client) []Client {
 	}
 
 	return subscriptionList
+}
+
+func sendMessage(address string, messageObj *Message) {
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("could not connect: %s", err)
+	}
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			fmt.Println("Cannot close connection")
+			os.Exit(1)
+		}
+	}(conn)
+
+	c := NewChatServiceClient(conn)
+
+	response, err := c.SayHello(context.Background(), messageObj)
+	if err != nil {
+		log.Fatalf("Error when calling SayHello: %s", err)
+	}
+
+	log.Printf("Response fromClient: {action : \"%s\", topic : \"%s\", body : \"%s\"}", response.Action, response.Topic, response.Body)
 }

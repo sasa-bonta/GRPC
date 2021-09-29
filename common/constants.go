@@ -5,6 +5,7 @@ const ConnectionType = "tcp"
 
 const PUBLISH = "publish"
 const SUBSCRIBE = "subscribe"
+const UNSUBSCRIBE = "unsubscribe"
 const CONFIRM = "confirm"
 const SUCCESS = "success"
-const ERROR = "error"
+const TEST = "test"
